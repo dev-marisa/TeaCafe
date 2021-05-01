@@ -2,18 +2,15 @@ package com.marisa.teacafe
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Table
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
 import org.springframework.data.repository.CrudRepository
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.data.relational.core.mapping.Table
+import org.springframework.data.annotation.Id
+import org.springframework.web.bind.annotation.*
 
 @Table("TEAS")
 data class Tea(@Id val id: String?, val flavor: String)
 
-interface TeaRepository : CrudRepository<Tea, String>{}
+interface TeaRepository : CrudRepository<Tea, String>
 
 @RestController
 class TeaController(val teaCart: TeaRepository) {
@@ -24,6 +21,18 @@ class TeaController(val teaCart: TeaRepository) {
     @PostMapping("/tea")
     fun add(@RequestBody newTea: Tea): String {
         teaCart.save(newTea)
+        return "ok"
+    }
+
+    @DeleteMapping("/tea/{id}")
+    fun remove(@PathVariable("id") id: String): String {
+        teaCart.deleteById(id)
+        return "ok"
+    }
+
+    @PutMapping("tea/{id}")
+    fun update(@PathVariable("id") id: String, @RequestBody theTea: Tea): String {
+        teaCart.save(theTea.copy(id=id))
         return "ok"
     }
 
